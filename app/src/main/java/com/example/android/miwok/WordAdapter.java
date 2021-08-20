@@ -22,13 +22,13 @@ public class WordAdapter extends ArrayAdapter<Word>{
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.list_item, parent, false);
         }
-
         Word currentWord = getItem(position);
 
         ImageView iconView = (ImageView) listItemView.findViewById(R.id.icon_of_theme);
+        int imageResourceId = currentWord.getImageResourceId();
         if(currentWord.hasImage()){
             iconView.setVisibility(View.VISIBLE);
-            iconView.setImageResource(currentWord.getImageResourceId());
+            iconView.setImageResource(imageResourceId);
         }else{
             iconView.setVisibility(View.GONE);
         }
@@ -41,4 +41,10 @@ public class WordAdapter extends ArrayAdapter<Word>{
 
         return listItemView;
     }
+
+    /**
+    private boolean hasImage(int imageResourceId) {
+        return imageResourceId != -1;
+    }
+    */
 }

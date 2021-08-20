@@ -32,4 +32,10 @@ public class Word {
 
     //judge whether there is an image for this word or not
     public boolean hasImage(){ return mImageResourceId != NO_IMAGE_PROVIDED; }
+
+    /**
+    private boolean hasImage(int imageResourceId) {
+        return imageResourceId != NO_IMAGE_PROVIDED;
+    }
+    */
 }
