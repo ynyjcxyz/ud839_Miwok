@@ -15,14 +15,27 @@
  */
 package com.example.android.miwok;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 
 
 public class NumbersActivity extends AppCompatActivity {
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +60,7 @@ public class NumbersActivity extends AppCompatActivity {
          * 第三个参数就是我们要显示的数据。listView会根据这三个参数，遍历adapterData里面的每一条数据，读出一条，
          * 显示到第二个参数对应的布局中，这样就形成了我们看到的listView;
          */
-        WordAdapter itemsAdapter = new WordAdapter(this,numbers);
+        WordAdapter itemsAdapter = new WordAdapter(this,numbers,R.color.category_numbers);
         //此处对应ListView视图，作为容器（列表），用于装载&显示数据，容器内的具体数据（列表项Item）则是由适配器（Adapter）提供
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(itemsAdapter);

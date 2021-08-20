@@ -3,37 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height">
 
     <ImageView
         android:id="@+id/icon_of_theme"
         android:background="@color/tan_background"
-        android:layout_width="88dp"
-        android:layout_height="88dp"
+        android:layout_width="@dimen/list_item_height"
+        android:layout_height="@dimen/list_item_height"
         android:scaleType="centerCrop" />
 
     <LinearLayout
-        android:background="@color/category_numbers"
+        android:id="@+id/list_item"
         android:layout_width="match_parent"
         android:layout_height="88dp"
         android:paddingLeft="16dp"
         android:orientation="vertical">
 
         <TextView
-            android:textColor="#FFFFFF"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             android:id="@+id/miwok_text_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom"
             tools:text="lutti" />
 
         <TextView
-            android:textColor="#FFFFFF"
+
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:id="@+id/default_text_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="top"
             tools:text="one" />
     </LinearLayout>
 </LinearLayout>
