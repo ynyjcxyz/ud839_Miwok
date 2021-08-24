@@ -9,22 +9,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
-public class WordAdapter extends ArrayAdapter<Word>{
+public class WordAdapter extends ArrayAdapter<Word> {
     private int mColorResourceId;
 
-    public WordAdapter(Activity context, ArrayList<Word> words,int colorResourceId)
-    {
+    public WordAdapter(Activity context, ArrayList<Word> words, int colorResourceId) {
         super(context, 0, words);
-        mColorResourceId  = colorResourceId;
+        mColorResourceId = colorResourceId;
     }
 
-    @SuppressLint("ResourceAsColor")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItemView = convertView;
-        if(listItemView == null){
+        if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.list_item, parent, false);
         }
@@ -38,10 +37,10 @@ public class WordAdapter extends ArrayAdapter<Word>{
 
         ImageView iconView = (ImageView) listItemView.findViewById(R.id.icon_of_theme);
         int imageResourceId = currentWord.getImageResourceId();
-        if(currentWord.hasImage()){
+        if (currentWord.hasImage()) {
             iconView.setVisibility(View.VISIBLE);
             iconView.setImageResource(imageResourceId);
-        }else{
+        } else {
             iconView.setVisibility(View.GONE);
         }
 
@@ -51,8 +50,8 @@ public class WordAdapter extends ArrayAdapter<Word>{
         TextView defaultTextView = (TextView) listItemView.findViewById(R.id.default_text_view);
         defaultTextView.setText(currentWord.getDefault());
 
-        View listItem  = listItemView.findViewById(R.id.list_item);
-        int color = ContextCompat.getColor(getContext(),mColorResourceId);
+        View listItem = listItemView.findViewById(R.id.list_item);
+        int color = ContextCompat.getColor(getContext(), mColorResourceId);
         listItem.setBackgroundColor(color);
 
         /**
