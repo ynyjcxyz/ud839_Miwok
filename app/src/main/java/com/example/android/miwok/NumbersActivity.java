@@ -18,6 +18,7 @@ package com.example.android.miwok;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -26,32 +27,53 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 
 public class NumbersActivity extends AppCompatActivity {
 
-    @SuppressLint("ResourceAsColor")
+    private MediaPlayer mMediaPlayer;
+
+    private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mediaPlayer) { releaseMediaPlayer(); }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        releaseMediaPlayer();
+    }
+
+    public void releaseMediaPlayer() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
         ArrayList<Word> numbers = new ArrayList<>();
-        numbers.add(new Word("one","lutti",R.drawable.number_one));
-        numbers.add(new Word("two","otiiko",R.drawable.number_two));
-        numbers.add(new Word("three","tolookosu",R.drawable.number_three));
-        numbers.add(new Word("four","oyyisa",R.drawable.number_four));
-        numbers.add(new Word("five","massokka",R.drawable.number_five));
-        numbers.add(new Word("six","temmokka",R.drawable.number_six));
-        numbers.add(new Word("seven","kenekaku",R.drawable.number_seven));
-        numbers.add(new Word("eight","kawinta",R.drawable.number_eight));
-        numbers.add(new Word("nine","wo'e",R.drawable.number_nine));
-        numbers.add(new Word("ten","na'aacha",R.drawable.number_ten));
+        numbers.add(new Word("one","lutti",R.drawable.number_one,R.raw.number_one));
+        numbers.add(new Word("two","otiiko",R.drawable.number_two,R.raw.number_two));
+        numbers.add(new Word("three","tolookosu",R.drawable.number_three,R.raw.number_three));
+        numbers.add(new Word("four","oyyisa",R.drawable.number_four,R.raw.number_four));
+        numbers.add(new Word("five","massokka",R.drawable.number_five,R.raw.number_five));
+        numbers.add(new Word("six","temmokka",R.drawable.number_six,R.raw.number_six));
+        numbers.add(new Word("seven","kenekaku",R.drawable.number_seven,R.raw.number_seven));
+        numbers.add(new Word("eight","kawinta",R.drawable.number_eight,R.raw.number_eight));
+        numbers.add(new Word("nine","wo'e",R.drawable.number_nine,R.raw.number_nine));
+        numbers.add(new Word("ten","na'aacha",R.drawable.number_ten,R.raw.number_ten));
 
         /**
          * 第一个参数是上下文，就是当前的Activity;
@@ -60,75 +82,88 @@ public class NumbersActivity extends AppCompatActivity {
          * 第三个参数就是我们要显示的数据。listView会根据这三个参数，遍历adapterData里面的每一条数据，读出一条，
          * 显示到第二个参数对应的布局中，这样就形成了我们看到的listView;
          */
-        WordAdapter itemsAdapter = new WordAdapter(this,numbers,R.color.category_numbers);
+        WordAdapter itemsAdapter = new WordAdapter(this, numbers, R.color.category_numbers);
         //此处对应ListView视图，作为容器（列表），用于装载&显示数据，容器内的具体数据（列表项Item）则是由适配器（Adapter）提供
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(itemsAdapter);
 
-        /**
-        LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView); //find rootView and store in rootView
-        TextView wordView = new TextView(this); //create a TextViews object and store in wordView
-        wordView.setText(numbers.get(0)); //let TextView display the String that stored in the list
-        rootView.addView(wordView); //add wordView as child of rootView
-        */
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                releaseMediaPlayer();
+                Word word = numbers.get(position);
+                mMediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getSoundResourceId());
+                mMediaPlayer.start();
+                mMediaPlayer.setOnCompletionListener(mCompletionListener);
+                /**Toast.makeText(NumbersActivity.this,
+                 "test Message", Toast.LENGTH_SHORT).show();*/
+            }
+        });
 
         /**
-        LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView);
-        for(int index = 0; index < numbers.size(); index++){
-            TextView wordView = new TextView(this);
-            wordView.setText(numbers.get(index));
-            rootView.addView(wordView);
-        }
-        */
-
+         LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView); //find rootView and store in rootView
+         TextView wordView = new TextView(this); //create a TextViews object and store in wordView
+         wordView.setText(numbers.get(0)); //let TextView display the String that stored in the list
+         rootView.addView(wordView); //add wordView as child of rootView
+         */
 
         /**
-        int index = 0;
-        while (index < numbers.size()) {
-            TextView wordView = new TextView(this);
-            wordView.setText(numbers.get(index));
-            rootView.addView(wordView);
-            index++;
-        }
-        */
-
-        /**
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(0));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(1));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(2));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(3));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(4));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(5));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(6));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(7));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(8));
-        Log.v("NumbersActivity","Word at index 0: " + numbers.get(9));
-        */
+         LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView);
+         for(int index = 0; index < numbers.size(); index++){
+         TextView wordView = new TextView(this);
+         wordView.setText(numbers.get(index));
+         rootView.addView(wordView);
+         }
+         */
 
 
         /**
-        String[] englishNumbers = new String[10];
-        englishNumbers[0] = "One";
-        englishNumbers[1] = "Two";
-        englishNumbers[2] = "Three";
-        englishNumbers[3] = "Four";
-        englishNumbers[4] = "Five";
-        englishNumbers[5] = "Six";
-        englishNumbers[6] = "Seven";
-        englishNumbers[7] = "Eight";
-        englishNumbers[8] = "Nine";
-        englishNumbers[9] = "Ten";
+         int index = 0;
+         while (index < numbers.size()) {
+         TextView wordView = new TextView(this);
+         wordView.setText(numbers.get(index));
+         rootView.addView(wordView);
+         index++;
+         }
+         */
 
-        Log.v("NumbersActivity","Word at index 0: " + englishNumbers[0]);
-        Log.v("NumbersActivity","Word at index 1: " + englishNumbers[1]);
-        Log.v("NumbersActivity","Word at index 2: " + englishNumbers[2]);
-        Log.v("NumbersActivity","Word at index 3: " + englishNumbers[3]);
-        Log.v("NumbersActivity","Word at index 4: " + englishNumbers[4]);
-        Log.v("NumbersActivity","Word at index 5: " + englishNumbers[5]);
-        Log.v("NumbersActivity","Word at index 6: " + englishNumbers[6]);
-        Log.v("NumbersActivity","Word at index 7: " + englishNumbers[7]);
-        Log.v("NumbersActivity","Word at index 8: " + englishNumbers[8]);
-        Log.v("NumbersActivity","Word at index 9: " + englishNumbers[9]);
+        /**
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(0));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(1));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(2));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(3));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(4));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(5));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(6));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(7));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(8));
+         Log.v("NumbersActivity","Word at index 0: " + numbers.get(9));
+         */
+
+
+        /**
+         String[] englishNumbers = new String[10];
+         englishNumbers[0] = "One";
+         englishNumbers[1] = "Two";
+         englishNumbers[2] = "Three";
+         englishNumbers[3] = "Four";
+         englishNumbers[4] = "Five";
+         englishNumbers[5] = "Six";
+         englishNumbers[6] = "Seven";
+         englishNumbers[7] = "Eight";
+         englishNumbers[8] = "Nine";
+         englishNumbers[9] = "Ten";
+
+         Log.v("NumbersActivity","Word at index 0: " + englishNumbers[0]);
+         Log.v("NumbersActivity","Word at index 1: " + englishNumbers[1]);
+         Log.v("NumbersActivity","Word at index 2: " + englishNumbers[2]);
+         Log.v("NumbersActivity","Word at index 3: " + englishNumbers[3]);
+         Log.v("NumbersActivity","Word at index 4: " + englishNumbers[4]);
+         Log.v("NumbersActivity","Word at index 5: " + englishNumbers[5]);
+         Log.v("NumbersActivity","Word at index 6: " + englishNumbers[6]);
+         Log.v("NumbersActivity","Word at index 7: " + englishNumbers[7]);
+         Log.v("NumbersActivity","Word at index 8: " + englishNumbers[8]);
+         Log.v("NumbersActivity","Word at index 9: " + englishNumbers[9]);
          */
     }
 }
