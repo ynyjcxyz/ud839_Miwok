@@ -43,4 +43,14 @@ public class Word {
         return imageResourceId != NO_IMAGE_PROVIDED;
     }
     */
+
+    @Override
+    public String toString() {
+        return "Word{" +
+                "mDefaultTranslation='" + mDefaultTranslation + '\'' +
+                ", mMiwokTranslation='" + mMiwokTranslation + '\'' +
+                ", mSoundResourceId=" + mSoundResourceId +
+                ", mImageResourceId=" + mImageResourceId +
+                '}';
+    }
 }

@@ -15,35 +15,58 @@
  */
 package com.example.android.miwok;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 
 public class NumbersActivity extends AppCompatActivity {
-
     private MediaPlayer mMediaPlayer;
+    private AudioManager mAudioManager;
 
-    private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mediaPlayer) { releaseMediaPlayer(); }
-    };
+    private AudioManager.OnAudioFocusChangeListener afChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                @Override
+                public void onAudioFocusChange(int focusChange) {
+                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+                            focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                        // Pause playback because your Audio Focus was
+                        // temporarily stolen, but will be back soon.
+                        // i.e. for a phone call
+                        mMediaPlayer.pause();
+                        mMediaPlayer.seekTo(0);
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        // Stop playback, because you lost the Audio Focus.
+                        // i.e. the user started some other playback app
+                        // Remember to unregister your controls/buttons here.
+                        // And release the kra — Audio Focus!
+                        // You’re done.
+                        releaseMediaPlayer();
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                        // Resume playback, because you hold the Audio Focus
+                        // again!
+                        // i.e. the phone call ended or the nav directions
+                        // are finished
+                        // If you implement ducking and lower the volume, be
+                        // sure to return it to normal here, as well.
+                        mMediaPlayer.start();
+                    }
+                }
+            };
+
+    private MediaPlayer.OnCompletionListener mCompletionListener =
+            new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    releaseMediaPlayer();
+                }
+            };
 
     @Override
     protected void onStop() {
@@ -55,6 +78,7 @@ public class NumbersActivity extends AppCompatActivity {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
+            mAudioManager.abandonAudioFocus(afChangeListener);
         }
     }
 
@@ -63,17 +87,29 @@ public class NumbersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
-        ArrayList<Word> numbers = new ArrayList<>();
-        numbers.add(new Word("one","lutti",R.drawable.number_one,R.raw.number_one));
-        numbers.add(new Word("two","otiiko",R.drawable.number_two,R.raw.number_two));
-        numbers.add(new Word("three","tolookosu",R.drawable.number_three,R.raw.number_three));
-        numbers.add(new Word("four","oyyisa",R.drawable.number_four,R.raw.number_four));
-        numbers.add(new Word("five","massokka",R.drawable.number_five,R.raw.number_five));
-        numbers.add(new Word("six","temmokka",R.drawable.number_six,R.raw.number_six));
-        numbers.add(new Word("seven","kenekaku",R.drawable.number_seven,R.raw.number_seven));
-        numbers.add(new Word("eight","kawinta",R.drawable.number_eight,R.raw.number_eight));
-        numbers.add(new Word("nine","wo'e",R.drawable.number_nine,R.raw.number_nine));
-        numbers.add(new Word("ten","na'aacha",R.drawable.number_ten,R.raw.number_ten));
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        final ArrayList<Word> numbers = new ArrayList<>();
+        numbers.add(new Word("one", "lutti",
+                R.drawable.number_one, R.raw.number_one));
+        numbers.add(new Word("two", "otiiko",
+                R.drawable.number_two, R.raw.number_two));
+        numbers.add(new Word("three", "tolookosu",
+                R.drawable.number_three, R.raw.number_three));
+        numbers.add(new Word("four", "oyyisa",
+                R.drawable.number_four, R.raw.number_four));
+        numbers.add(new Word("five", "massokka",
+                R.drawable.number_five, R.raw.number_five));
+        numbers.add(new Word("six", "temmokka",
+                R.drawable.number_six, R.raw.number_six));
+        numbers.add(new Word("seven", "kenekaku",
+                R.drawable.number_seven, R.raw.number_seven));
+        numbers.add(new Word("eight", "kawinta",
+                R.drawable.number_eight, R.raw.number_eight));
+        numbers.add(new Word("nine", "wo'e",
+                R.drawable.number_nine, R.raw.number_nine));
+        numbers.add(new Word("ten", "na'aacha",
+                R.drawable.number_ten, R.raw.number_ten));
 
         /**
          * 第一个参数是上下文，就是当前的Activity;
@@ -91,79 +127,24 @@ public class NumbersActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 releaseMediaPlayer();
+                // parent是识别是哪个listview；
+                // view是当前listview的item的view的布局，就是可以用这个view，获取里面的控件的id后操作控件
+                // position是当前item在listview中适配器里的位置
+                // id是当前item在listview里的第几行的位置
                 Word word = numbers.get(position);
-                mMediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getSoundResourceId());
-                mMediaPlayer.start();
-                mMediaPlayer.setOnCompletionListener(mCompletionListener);
-                /**Toast.makeText(NumbersActivity.this,
-                 "test Message", Toast.LENGTH_SHORT).show();*/
+
+                int result = mAudioManager.requestAudioFocus(afChangeListener,
+                        // Use the music stream.
+                        AudioManager.STREAM_MUSIC,
+                        // Request permanent focus.
+                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mMediaPlayer = MediaPlayer.create(NumbersActivity.this,
+                            word.getSoundResourceId());
+                    mMediaPlayer.start();
+                    mMediaPlayer.setOnCompletionListener(mCompletionListener);
+                }
             }
         });
-
-        /**
-         LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView); //find rootView and store in rootView
-         TextView wordView = new TextView(this); //create a TextViews object and store in wordView
-         wordView.setText(numbers.get(0)); //let TextView display the String that stored in the list
-         rootView.addView(wordView); //add wordView as child of rootView
-         */
-
-        /**
-         LinearLayout rootView = (LinearLayout)findViewById(R.id.rootView);
-         for(int index = 0; index < numbers.size(); index++){
-         TextView wordView = new TextView(this);
-         wordView.setText(numbers.get(index));
-         rootView.addView(wordView);
-         }
-         */
-
-
-        /**
-         int index = 0;
-         while (index < numbers.size()) {
-         TextView wordView = new TextView(this);
-         wordView.setText(numbers.get(index));
-         rootView.addView(wordView);
-         index++;
-         }
-         */
-
-        /**
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(0));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(1));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(2));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(3));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(4));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(5));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(6));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(7));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(8));
-         Log.v("NumbersActivity","Word at index 0: " + numbers.get(9));
-         */
-
-
-        /**
-         String[] englishNumbers = new String[10];
-         englishNumbers[0] = "One";
-         englishNumbers[1] = "Two";
-         englishNumbers[2] = "Three";
-         englishNumbers[3] = "Four";
-         englishNumbers[4] = "Five";
-         englishNumbers[5] = "Six";
-         englishNumbers[6] = "Seven";
-         englishNumbers[7] = "Eight";
-         englishNumbers[8] = "Nine";
-         englishNumbers[9] = "Ten";
-
-         Log.v("NumbersActivity","Word at index 0: " + englishNumbers[0]);
-         Log.v("NumbersActivity","Word at index 1: " + englishNumbers[1]);
-         Log.v("NumbersActivity","Word at index 2: " + englishNumbers[2]);
-         Log.v("NumbersActivity","Word at index 3: " + englishNumbers[3]);
-         Log.v("NumbersActivity","Word at index 4: " + englishNumbers[4]);
-         Log.v("NumbersActivity","Word at index 5: " + englishNumbers[5]);
-         Log.v("NumbersActivity","Word at index 6: " + englishNumbers[6]);
-         Log.v("NumbersActivity","Word at index 7: " + englishNumbers[7]);
-         Log.v("NumbersActivity","Word at index 8: " + englishNumbers[8]);
-         Log.v("NumbersActivity","Word at index 9: " + englishNumbers[9]);
-         */
     }
 }
