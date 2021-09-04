@@ -10,13 +10,16 @@ public class Word {
     private static final int NO_IMAGE_PROVIDED = -1;
 
 //the first constructors that contain only two parameters
-    public Word(String defaultTranslation,String miwokTranslation,int soundResourceId){
+    public Word(String defaultTranslation,String miwokTranslation,
+                int soundResourceId){
         mDefaultTranslation = defaultTranslation;
         mMiwokTranslation = miwokTranslation;
         mSoundResourceId = soundResourceId;
     }
 //the second constructors contain three parameters
-    public Word(String defaultTranslation,String miwokTranslation,int defaultImageResourceId,int soundResourceId){
+    public Word(String defaultTranslation,String miwokTranslation,
+                int defaultImageResourceId,
+                int soundResourceId){
         mDefaultTranslation = defaultTranslation;
         mMiwokTranslation = miwokTranslation;
         mImageResourceId = defaultImageResourceId;

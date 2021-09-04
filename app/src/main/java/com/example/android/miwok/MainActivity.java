@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Create a new intent to open the {@link NumbersActivity}
-                Intent numbersIntent = new Intent(MainActivity.this, NumbersActivity.class);
+                Intent numbersIntent = new Intent(MainActivity.this,
+                        NumbersActivity.class);
                 // Start the new activity
                 startActivity(numbersIntent);
             }
@@ -55,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         familyMembers.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent familyIntent = new Intent(MainActivity.this, FamilyActivity.class);
+                Intent familyIntent = new Intent(MainActivity.this,
+                        FamilyActivity.class);
                 startActivity(familyIntent);
             }
         });
@@ -64,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         colors.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent colorsIntent = new Intent(MainActivity.this, ColorsActivity.class);
+                Intent colorsIntent = new Intent(MainActivity.this,
+                        ColorsActivity.class);
                 startActivity(colorsIntent);
             }
         });
@@ -73,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
         phrases.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent phrasesIntent = new Intent(MainActivity.this, PhrasesActivity.class);
+                Intent phrasesIntent = new Intent(MainActivity.this,
+                        PhrasesActivity.class);
                 startActivity(phrasesIntent);
             }
         });

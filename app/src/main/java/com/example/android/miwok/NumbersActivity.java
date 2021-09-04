@@ -113,19 +113,26 @@ public class NumbersActivity extends AppCompatActivity {
 
         /**
          * 第一个参数是上下文，就是当前的Activity;
-         * 第二个参数是android sdk中自己内置的一个布局，它里面只有一个TextView，这个参数是表明我们数组中每一条数据的布局是这个view，
+         * 第二个参数是android sdk中自己内置的一个布局，
+         * 它里面只有一个TextView，这个参数是表明我们数组中每一条数据的布局是这个view，
          * 就是将每一条数据都显示在这个view上面;
          * 第三个参数就是我们要显示的数据。listView会根据这三个参数，遍历adapterData里面的每一条数据，读出一条，
          * 显示到第二个参数对应的布局中，这样就形成了我们看到的listView;
          */
-        WordAdapter itemsAdapter = new WordAdapter(this, numbers, R.color.category_numbers);
-        //此处对应ListView视图，作为容器（列表），用于装载&显示数据，容器内的具体数据（列表项Item）则是由适配器（Adapter）提供
+        WordAdapter itemsAdapter = new WordAdapter(this,
+                numbers,
+                R.color.category_numbers);
+        //此处对应ListView视图，作为容器（列表），用于装载&显示数据，
+        // 容器内的具体数据（列表项Item）则是由适配器（Adapter）提供
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(itemsAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent,
+                                    View view,
+                                    int position,
+                                    long id) {
                 releaseMediaPlayer();
                 // parent是识别是哪个listview；
                 // view是当前listview的item的view的布局，就是可以用这个view，获取里面的控件的id后操作控件
